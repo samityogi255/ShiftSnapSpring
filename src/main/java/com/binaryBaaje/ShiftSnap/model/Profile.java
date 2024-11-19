@@ -1,21 +1,24 @@
 package com.binaryBaaje.ShiftSnap.model;
 
-import java.util.List;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Profile {
 	
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long profileId; 
+
+	@Size(min=2, max=50, message= "Name must be between 2 and 50 characters")
 	private String name;
+
 	private String profilePic;
 	
 	 @ManyToOne
@@ -31,6 +34,10 @@ public class Profile {
 		this.profileId = profileId;
 		this.name = name;
 		this.profilePic = profilePic;
+	}
+
+	public Profile(){
+		
 	}
 
 	public Long getProfileId() {

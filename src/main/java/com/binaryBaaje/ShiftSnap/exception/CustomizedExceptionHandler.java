@@ -27,6 +27,12 @@ public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler{
 		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
 		return new ResponseEntity<ErrorDetails> (errorDetails, HttpStatus.NOT_FOUND);
 	}
+
+	@ExceptionHandler(ProfileNotFoundException.class)
+	public final ResponseEntity<ErrorDetails> profileNotFoundException(Exception ex, WebRequest request) throws Exception {
+		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
+		return new ResponseEntity<ErrorDetails> (errorDetails, HttpStatus.NOT_FOUND);
+	}
 	
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -35,5 +41,8 @@ public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler{
 		ex.getFieldError().getDefaultMessage();
 		return new ResponseEntity<Object>(errorDetails, HttpStatus.BAD_REQUEST);
 	}
+
+
+
 
 }

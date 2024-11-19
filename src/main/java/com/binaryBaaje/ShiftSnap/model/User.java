@@ -1,7 +1,5 @@
 package com.binaryBaaje.ShiftSnap.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +20,7 @@ public class User {
 	private Long userId; 
 	
 	
-	@Size(min = 2, message = "Name must be at least 2 characters long")
+	@Size(min=2, max=50, message= "Name must be between 2 and 50 characters")
 	private String name;
 	
 	@NotBlank(message = "Password cannot be blank")
