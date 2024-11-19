@@ -2,24 +2,35 @@ package com.binaryBaaje.ShiftSnap.model;
 
 import java.util.List;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Job {
 	
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long jobId;
+
+	@Size(min=2, max=50, message= "Company Name must be between 2 and 50 characters")
 	private String companyName;
+
+	@Size(min = 2, max = 50, message = "Position must be between 2 and 50 characters")
 	private String position;
+
+	@DecimalMin(value = "0.0", inclusive = false, message = "Pay rate must be greater than 0")
 	private Double payRate;
 	
-	
+	@NotEmpty(message = "Work history cannot be empty")
 	private List<String> workHistory;
 	
 	@OneToMany(mappedBy= "job", cascade = CascadeType.ALL)
@@ -34,6 +45,10 @@ public class Job {
 		this.companyName = companyName;
 		this.position = position;
 		this.payRate = payRate;
+	}
+
+	public Job(){
+
 	}
 
 	public Long getJobId() {
