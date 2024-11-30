@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class WorkSession {
@@ -15,8 +17,14 @@ public class WorkSession {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long sessionId;
+
+	@FutureOrPresent(message = "Start time must be in the present or future")
 	private LocalDateTime startTime;
+
+	@NotNull(message = "End time cannot be null")
 	private LocalDateTime endTime;
+
+	@NotNull(message = "Date cannot be null")
 	private LocalDateTime date;
 	
     @ManyToOne
