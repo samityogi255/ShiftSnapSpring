@@ -4,11 +4,13 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -29,8 +31,8 @@ public class ProfileController {
    }
 
    @GetMapping("/profiles")
-   public List<Profile> retreiveAllProfiles(){
-    return profileRepository.findAll();
+   public ResponseEntity<List<Profile>> retreiveAllProfiles(){
+    return new ResponseEntity<>(profileRepository.findAll(),HttpStatus.OK);
    }
 
    @GetMapping("/profiles/{profileId}")
@@ -59,21 +61,23 @@ public class ProfileController {
    }
 
    @DeleteMapping("/profiles/{profileId}")
-   public void deleteProfile(@PathVariable Long profileId){
-    profileRepository.deleteById(profileId);
+   public ResponseEntity<String> deleteProfile(@PathVariable Long profileId){
+    Optional<Profile> profile = profileRepository.findById(profileId);
+    if(profile.isPresent()){
+        profileRepository.deleteById(profileId);
+        return new ResponseEntity<>("Deleted", HttpStatus.OK);
+    }
+    return new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND);
    }
 
-   @PostMapping("/profiles/{profileId}")
-   public ResponseEntity<Object> updateProfile( @Valid @RequestBody Profile profile){
-    Profile savedProfile =profileRepository.save(profile);
-
-    URI location =  ServletUriComponentsBuilder
-                                    .fromCurrentRequest()
-                                    .path("{profileId}")
-                                    .buildAndExpand(savedProfile.getProfileId())
-                                    .toUri();
-    return ResponseEntity.created(location).build();
-    
+   @PutMapping("/profiles/{profileId}")
+   public ResponseEntity<Object> updateProfile( @Valid @RequestBody Profile profile, @PathVariable Long profileId){
+    if(profileRepository.existsById(profileId)){
+        profile.setProfileId(profileId);
+        profileRepository.save(profile);
+        return new ResponseEntity<>("Profile is updated", HttpStatus.OK);
+    }
+    return new ResponseEntity<>("Profile Not Found", HttpStatus.NOT_FOUND);
    }
 
     
