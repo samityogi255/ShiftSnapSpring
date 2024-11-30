@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.service.annotation.PutExchange;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.binaryBaaje.ShiftSnap.exception.UserNotFoundException;
@@ -65,7 +66,7 @@ public class UserController {
 		
 	}
 	
-	@PostMapping("/users/{userId}")
+	@PutExchange("/users/{userId}")
 	public ResponseEntity<Object> upateUser(@Valid @RequestBody User user) {
 		User savedUser =userRepository.save(user);
 		
