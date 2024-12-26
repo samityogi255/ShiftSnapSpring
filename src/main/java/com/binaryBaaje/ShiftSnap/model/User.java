@@ -1,5 +1,6 @@
 package com.binaryBaaje.ShiftSnap.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,37 +8,45 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "user_table")
-public class User {
+public class User  {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "userid")
 	private Long userId; 
 	
 	
 	@Size(min=2, max=50, message= "Name must be between 2 and 50 characters")
 	private String name;
+
+	@Email
+	@Size(min=2, max=50, message= "Name must be between 2 and 50 characters")
+	private String email;
 	
 	@NotBlank(message = "Password cannot be blank")
     @Size(min = 8, message = "Password must be at least 8 characters long")
 	private String password; 
 	
 	@NotNull(message = "isNew cannot be null")
-	private Boolean isNew;
+	@Column(name = "isnew")
+	private Boolean isNew= true;
 	
 	@OneToOne
 	@JoinColumn(name="profile_id", referencedColumnName="profileId")
 	private Profile profile;
 
-	public User(Long userId,String name, String password, Boolean isNew) {
+	public User(Long userId,String name,String email, String password, Boolean isNew) {
 		super();
 		this.userId = userId;
 		this.name = name;
+		this.email = email;
 		this.password = password;
 		this.isNew = isNew;
 	}
@@ -63,6 +72,15 @@ public class User {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 
 	public String getPassword() {
 		return password;
@@ -90,7 +108,7 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", password=" + password + ", isNew=" + isNew + "]";
+		return "User [userId=" + userId + "Email="+ email + ", password=" + password + ", isNew=" + isNew + "]";
 	}
 	
 	

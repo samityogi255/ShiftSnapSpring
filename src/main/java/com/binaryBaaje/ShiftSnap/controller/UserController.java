@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,10 +26,13 @@ import jakarta.validation.Valid;
 public class UserController {
 	
 	private UserRepository userRepository;
+	private PasswordEncoder passwordEncoder;
 	
-	public UserController( UserRepository userRepository) {
+	public UserController( UserRepository userRepository, PasswordEncoder passwordEncoder) {
 		this.userRepository = userRepository;
-	}
+		this.passwordEncoder = passwordEncoder;
+	} 
+
 	
 	
 	@GetMapping("/users")
@@ -50,6 +54,7 @@ public class UserController {
 	
 	@PostMapping("/users")
 	public ResponseEntity<Object> addNewUser(@Valid @RequestBody User user) {
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		User savedUser =userRepository.save(user);
 		
 		URI location = ServletUriComponentsBuilder
@@ -60,8 +65,6 @@ public class UserController {
 		return ResponseEntity.created(location ).build();
 		
 	}
-	
-
 
 	@DeleteMapping("/users/{userId}")
 	public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
@@ -76,11 +79,21 @@ public class UserController {
 
 	@PutMapping("/users/{userId}")
 	public ResponseEntity<Object> updateUser(@Valid @RequestBody User user, @PathVariable Long userId) {
-		if(userRepository.existsById(userId)){
+		Optional<User> users = userRepository.findById(userId);
+
+		if(users.isPresent()){
+			User existingUser = users.get();
+
+			if(!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())){
+				user.setPassword(passwordEncoder.encode(user.getPassword()));
+			}
+			else{
+				user.setPassword(existingUser.getPassword());
+			}
 			user.setUserId(userId);
 			userRepository.save(user);
 			return new ResponseEntity<>("User Updated Successfully", HttpStatus.OK);
 		}
-		return new ResponseEntity<>("User Not Found", HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("Failed to Update User", HttpStatus.NOT_FOUND);
 	}
 }
